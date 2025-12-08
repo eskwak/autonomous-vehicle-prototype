@@ -24,9 +24,9 @@ const db = getDatabase(app);
 const controlRef = ref(db, "car/control");
 
 // states
-let speed = 50;
+let speed = 60;
 let forward = true;
-let turn = 0;
+let turn = 0; // left = -1, straight = 0, right = 1
 let accelerating = false;
 
 // UI helpers
@@ -35,10 +35,11 @@ const speedLabel = document.getElementById("speedLabel");
 const turnLabel = document.getElementById("turnLabel");
 const accelLabel = document.getElementById("accelLabel");
 
-// update UI labels to reflect current controls
+// updates UI labels to reflect current controls settings
 function updateUI() {
   dirLabel.textContent = forward ? "FORWARD" : "REVERSE";
   speedLabel.textContent = speed.toString();
+
   if (turn === -1) {
     turnLabel.textContent = "LEFT";
   }
@@ -51,77 +52,70 @@ function updateUI() {
   accelLabel.textContent = accelerating ? "YES" : "NO";
 }
 
-// push current state to RTDB
+// pushes current state to RTDB
 function pushState() {
-  update(controlRef, {speed, forward, turn, accelerating}).catch(err => console.error(err));
+  update(controlRef, {speed, forward, turn, accelerating}).catch(console.error);
 }
 
-// toggle between forward and reverse direction
-document.getElementById("dirBtn").onclick = () => {
-  forward = !forward;
-  updateUI();
-  pushState();
-};
-
-// increase speed
+// increase speed button
 document.getElementById("speedUpBtn").onclick = () => {
   speed = Math.min(100, speed + 10);
   updateUI();
   pushState();
 };
 
-// decrease speed
+// decrease speed button
 document.getElementById("speedDownBtn").onclick = () => {
-  speed = Math.max(50, speed - 10);
+  speed = Math.max(60, speed - 10);
   updateUI();
   pushState();
 };
 
-// set turn direction to left
-document.getElementById("leftBtn").onclick = () => {
-  turn = -1;
-  updateUI();
-  pushState();
-};
-
-// set turn direction to right
-document.getElementById("rightBtn").onclick = () => {
-  turn = 1;
-  updateUI();
-  pushState();
-};
-
-// set turn direction to straight
-document.getElementById("straightBtn").onclick = () => {
-  turn = 0;
-  updateUI();
-  pushState();
-};
-
-// enable/disable accelerating
-function setAccelerating(val) {
-  accelerating = val;
+// when movement button is pressed
+function startMove(isForward, turnValue) {
+  forward = isForward;
+  turn = turnValue;
+  accelerating = true;
   updateUI();
   pushState();
 }
 
-const accelBtn = document.getElementById("accelerateBtn");
+// when movement button is released
+function stopMove() {
+  accelerating = false;
+  updateUI();
+  pushState();
+}
 
-// events for accelerating (for web testing)
-accelBtn.addEventListener("mousedown", () => setAccelerating(true));
-accelBtn.addEventListener("mouseup", () => setAccelerating(false));
-accelBtn.addEventListener("mouseleave", () => setAccelerating(false));
+// web/mobile buttotn handlers for movement
+function bindHoldButton(button, isForward, turnValue) {
+  // mouse
+  button.addEventListener("mousedown", () => startMove(isForward, turnValue));
+  button.addEventListener("mouseup", stopMove);
+  button.addEventListener("mouseleave", stopMove);
 
-// events for accelerating (on phone)
-accelBtn.addEventListener("touchstart", e => {
-  e.preventDefault();
-  setAccelerating(true);
-});
+  // mobile 
+  button.addEventListener("touchstart", e => {
+    e.preventDefault();
+    startMove(isForward, turnValue);
+  });
+  button.addEventListener("touchend", e => {
+    e.preventDefault();
+    stopMove();
+  });
+}
 
-accelBtn.addEventListener("touchend", e => {
-  e.preventDefault();
-  setAccelerating(false);
-});
+// direction buttons
+const forwardBtn = document.getElementById("forwardBtn");
+const backwardBtn = document.getElementById("backwardBtn");
+const leftBtn = document.getElementById("leftBtn");
+const rightBtn = document.getElementById("rightBtn");
+
+// bind buttons
+bindHoldButton(forwardBtn, true, 0);
+bindHoldButton(backwardBtn, false, 0);
+bindHoldButton(leftBtn, true, -1);
+bindHoldButton(rightBtn, true, 1);
 
 updateUI();
 pushState();

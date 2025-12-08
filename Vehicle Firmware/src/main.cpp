@@ -17,6 +17,8 @@ void setup(void) {
   // ultrasonic sensor pins
   pinMode(FRONT_SENSOR_TRIG_PIN, OUTPUT);
   pinMode(FRONT_SENSOR_ECHO_PIN, INPUT);
+  pinMode(BACK_SENSOR_TRIG_PIN, OUTPUT);
+  pinMode(BACK_SENSOR_ECHO_PIN, INPUT);
 
   // motor driver pins 
   ledcSetup(LEFT_MOTOR_CHANNEL, frequency, resolution);
@@ -37,28 +39,44 @@ void setup(void) {
   stop_motors();
 }
 
-// loop function contains repeated execution code
+// loop for sensor reading and motor updates 
 void loop(void) {
-  static unsigned long last_poll = 0;
-  const unsigned long POLL_INTERVAL_MS = 50;
+  static unsigned long last_control = 0;
+  static unsigned long last_rtdb = 0;
 
-  if (millis() - last_poll >= POLL_INTERVAL_MS) {
-    last_poll = millis();
-    
-    // trigger and read front ultrasonic sensor
+  const unsigned long CONTROL_INTERVAL_MS = 20;
+  const unsigned long RTDB_INTERVAL_MS = 150;
+
+  // loop for sensor readings and motor update
+  if (millis() - last_control >= CONTROL_INTERVAL_MS) {
+    last_control = millis();
+
+    // front sensor reading
     digitalWrite(FRONT_SENSOR_TRIG_PIN, LOW);
     delayMicroseconds(2);
     digitalWrite(FRONT_SENSOR_TRIG_PIN, HIGH);
     delayMicroseconds(10);
     digitalWrite(FRONT_SENSOR_TRIG_PIN, LOW);
-
-    front_duration = pulseIn(FRONT_SENSOR_ECHO_PIN, HIGH);
+    front_duration = pulseIn(FRONT_SENSOR_ECHO_PIN, HIGH, 30000);
     front_distance_cm = front_duration * sound_speed / 2;
 
-    read_car_state_from_rtdb();
+    // back sensor reading
+    digitalWrite(BACK_SENSOR_TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(BACK_SENSOR_TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(BACK_SENSOR_TRIG_PIN, LOW);
+    back_duration = pulseIn(BACK_SENSOR_ECHO_PIN, HIGH, 30000);
+    back_distance_cm = back_duration * sound_speed / 2;
+
     update_motors();
   }
 
+  // loop to read commands from RTDB
+  if (millis() - last_rtdb >= RTDB_INTERVAL_MS) {
+    last_rtdb = millis();
+    read_car_state_from_rtdb();
+  }
 
   // Serial.print("Distance (cm): ");
   // Serial.println(front_distance_cm);

@@ -16,5 +16,7 @@ const uint8_t RIGHT_MOTOR_ENABLE_PIN = 32;
 // ultrasonic sensor pins
 const uint8_t FRONT_SENSOR_ECHO_PIN = 23; 
 const uint8_t FRONT_SENSOR_TRIG_PIN = 22;
+const uint8_t BACK_SENSOR_ECHO_PIN = 21;
+const uint8_t BACK_SENSOR_TRIG_PIN = 19;
 
 #endif

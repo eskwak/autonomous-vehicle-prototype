@@ -2,16 +2,19 @@
 #include "firebase_and_wifi.hpp"
 #include "pinout.hpp"
 
+// pwm data
 int frequency = 3000;
 int resolution = 8;
 int MIN_DUTY_CYCLE = 50;
 int MIN_TURN_DUTY_CYCLE = 25;
 
+// vehicle data
 uint8_t speed_percent = 0;
 bool forward_direction = true;
 int turn_direction = 0;
 bool accelerate = false;
 
+// approx sound speed for using ultrasonic sensors
 float sound_speed = 0.034;
 
 // front ultrasonic sensor
@@ -19,12 +22,17 @@ long front_duration;
 float front_distance_cm;
 const float FRONT_STOP_DISTANCE_CM = 20.0f;
 
+// back ultrasonic sensor
+long back_duration;
+float back_distance_cm;
+const float BACK_STOP_DISTANCE_CM = 20.0f;
+
 void read_car_state_from_rtdb(void) {
     // speed
     String speed_string = "/car/control/speed";
     if (Firebase.RTDB.getInt(&firebase_data, speed_string)) {
         speed_percent = firebase_data.intData();
-        if (speed_percent < 40) speed_percent = 40;
+        if (speed_percent < 50) speed_percent = 50;
         if (speed_percent > 100) speed_percent = 100;
     }
     else Serial.printf("Speed read failed: %s\n", firebase_data.errorReason().c_str());
@@ -72,6 +80,12 @@ void update_motors(void) {
 
     // stop forward motion if front sensor detects obstancle
     if (forward_direction && front_distance_cm > 0 && front_distance_cm <= FRONT_STOP_DISTANCE_CM){
+        stop_motors();
+        return;
+    }
+
+    // stop backward motion if back sensor detects obstacle
+    if (!forward_direction && back_distance_cm > 0 && back_distance_cm <= BACK_STOP_DISTANCE_CM) {
         stop_motors();
         return;
     }

@@ -15,31 +15,30 @@
   </head>
   <body>
     <h1>Vehicle Controller</h1>
-    
+
     <div class="status">
       <div>Direction: <span id="dirLabel">FORWARD</span></div>
-      <div>Speed: <span id="speedLabel">50</span></div>
+      <div>Speed: <span id="speedLabel">60</span></div>
       <div>Turn: <span id="turnLabel">STRAIGHT</span></div>
       <div>Accelerating: <span id="accelLabel">NO</span></div>
     </div>
 
-    <div class="row">
-      <button class="btn-main" id="dirBtn">Toggle Forward/Reverse</button>
-    </div>
-
+    <!-- speed controls -->
     <div class="row">
       <button class="btn-secondary" id="speedDownBtn">- Speed</button>
       <button class="btn-secondary" id="speedUpBtn">+ Speed</button>
     </div>
 
+    <!-- direction controls -->
     <div class="row">
-      <button class="btn-secondary" id="leftBtn">Left</button>
-      <button class="btn-secondary" id="straightBtn">Straight</button>
-      <button class="btn-secondary" id="rightBtn">Right</button>
+      <button class="btn-main" id="forwardBtn">Forward</button>
     </div>
-
     <div class="row">
-      <button class="btn-main" id="accelerateBtn">ACCELERATE</button>
+      <button class="btn-main" id="leftBtn">&nbsp; &nbsp; Left &nbsp; &nbsp;</button>
+      <button class="btn-main" id="rightBtn">&nbsp; &nbsp; Right &nbsp; &nbsp;</button>
+    </div>
+    <div class="row">
+      <button class="btn-main" id="backwardBtn">Backward</button>
     </div>
 
     <script type="module" src="app.js"></script>

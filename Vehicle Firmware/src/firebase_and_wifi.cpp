@@ -1,5 +1,6 @@
 #include "firebase_and_wifi.hpp"
 
+
 // const char* WIFI_SSID = "...";
 // const char* WIFI_PASSWORD = "...";
 
