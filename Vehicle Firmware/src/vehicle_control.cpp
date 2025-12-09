@@ -14,6 +14,14 @@ bool forward_direction = true;
 int turn_direction = 0;
 bool accelerate = false;
 
+// vehicle control 
+unsigned long last_control = 0;
+unsigned long last_rtdb = 0;
+
+// intervals for ESP32 control and RTDB querying
+const unsigned long CONTROL_INTERVAL_MS = 20;
+const unsigned long RTDB_INTERVAL_MS = 30;
+
 // approx sound speed for using ultrasonic sensors
 float sound_speed = 0.034;
 
@@ -102,21 +110,15 @@ void update_motors(void) {
     int left_duty_cycle = base_duty_cycle;
     int right_duty_cycle = base_duty_cycle;
 
-    // left turn
+    //left turn (directions are now flipped due to orientation of components and wiring)
     if (turn_direction == -1) {
+        left_duty_cycle = 0;
         right_duty_cycle = base_duty_cycle;
-        left_duty_cycle = base_duty_cycle / 2;
-        if (left_duty_cycle > 0 && left_duty_cycle < MIN_TURN_DUTY_CYCLE) {
-            left_duty_cycle = MIN_TURN_DUTY_CYCLE;
-        }
     }
     // right turn
     else if (turn_direction == 1) {
+        right_duty_cycle = 0;
         left_duty_cycle = base_duty_cycle;
-        right_duty_cycle = base_duty_cycle / 2;
-        if (right_duty_cycle > 0 && right_duty_cycle < MIN_TURN_DUTY_CYCLE) {
-            right_duty_cycle = MIN_TURN_DUTY_CYCLE;
-        }
     }
 
     if (forward_direction) {

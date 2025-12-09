@@ -1,5 +1,10 @@
 #include "firebase_and_wifi.hpp"
 
+const char* WIFI_SSID = "esk-xps";
+const char* WIFI_PASSWORD = "esk-xps-password";
+
+const char* API_KEY = "AIzaSyBGXfmSrV504OtG8232OJ1NKeNPC2y6s3o";
+const char* DATABASE_URL = "https://autonomous-vehicle-985f1-default-rtdb.firebaseio.com";
 
 // const char* WIFI_SSID = "...";
 // const char* WIFI_PASSWORD = "...";

@@ -15,6 +15,14 @@ extern bool forward_direction;
 extern int turn_direction; // left = -1, straight = 0, right = 1
 extern bool accelerate;
 
+// control variables
+extern unsigned long last_control;
+extern unsigned long last_rtdb;
+
+// intervals for updating controls and querying RTDB
+extern const unsigned long CONTROL_INTERVAL_MS;
+extern const unsigned long RTDB_INTERVAL_MS;
+
 // sound speed for ultrasonic sensor
 extern float sound_speed;
 

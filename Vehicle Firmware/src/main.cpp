@@ -41,12 +41,6 @@ void setup(void) {
 
 // loop for sensor reading and motor updates 
 void loop(void) {
-  static unsigned long last_control = 0;
-  static unsigned long last_rtdb = 0;
-
-  const unsigned long CONTROL_INTERVAL_MS = 20;
-  const unsigned long RTDB_INTERVAL_MS = 150;
-
   // loop for sensor readings and motor update
   if (millis() - last_control >= CONTROL_INTERVAL_MS) {
     last_control = millis();

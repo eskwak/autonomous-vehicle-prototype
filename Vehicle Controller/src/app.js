@@ -16,7 +16,14 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js";
 
 const firebaseConfig = {
-  
+  apiKey: "AIzaSyBGXfmSrV504OtG8232OJ1NKeNPC2y6s3o",
+  authDomain: "autonomous-vehicle-985f1.firebaseapp.com",
+  databaseURL: "https://autonomous-vehicle-985f1-default-rtdb.firebaseio.com",
+  projectId: "autonomous-vehicle-985f1",
+  storageBucket: "autonomous-vehicle-985f1.firebasestorage.app",
+  messagingSenderId: "486094215958",
+  appId: "1:486094215958:web:7a031f6af8bc88c8fc8e37",
+  measurementId: "G-100C0RMZR8"
 }
 
 const app = initializeApp(firebaseConfig);
