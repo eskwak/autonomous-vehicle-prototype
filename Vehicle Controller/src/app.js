@@ -6,7 +6,7 @@
  *  */ 
 
 // make sure to update this with ESP32's current address
-const ESP_ADDRESS = "http://192.168.137.43";
+const ESP_ADDRESS = "http://192.168.137.105";
 
 // states
 let speed = 5;

@@ -22,6 +22,7 @@ const float TURN_SPEED_FACTOR = 0.65f;
 // vehicle data
 const uint8_t MIN_SPEED_PERCENT = 5;
 const uint8_t MAX_SPEED_PERCENT = 80;
+// need turn stop threshold percent or else the thign spazzes out for some reason
 const uint8_t TURN_STOP_THRESHOLD_PERCENT = 20;
 uint8_t speed_percent = 0;
 bool forward_direction = true;
@@ -70,11 +71,12 @@ static int compute_duty_from_percent(uint8_t percent) {
     return duty_cycle;
 }
 
-// returns duty cycle for inner wheel while turning; can force aggressive stop
+// returns duty cycle for the 'inner' wheel. When turning right, the inner wheel would be right
 static int compute_inner_duty(int base_duty_cycle, uint8_t current_speed_percent, bool aggressive_turn) {
     if (aggressive_turn) return MIN_TURN_DUTY_CYCLE;
     if (current_speed_percent < TURN_STOP_THRESHOLD_PERCENT) return MIN_TURN_DUTY_CYCLE;
 
+    // just truncate the duty cycle to an int there's no noticeable diff
     int duty_cycle = static_cast<int>(base_duty_cycle * TURN_SPEED_FACTOR);
     if (duty_cycle < MIN_TURN_DUTY_CYCLE) duty_cycle = MIN_TURN_DUTY_CYCLE;
     return duty_cycle;
@@ -115,7 +117,7 @@ void update_motors(void) {
         if (front_blocked) {
             // if left side has more free space, turn left
             // if not, turn right
-            // if indecisive, turn right and poll the ultrasonic sensors again
+            // when readings are indecicsive, this currently defaults to right for demo purposes
             if (left_for_compare > right_for_compare) turn_direction = -1;
             else if (right_for_compare > left_for_compare) turn_direction = 1;
             else turn_direction = 1;
